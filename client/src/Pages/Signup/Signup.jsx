@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import './Signup.css'
 import bg from '../assets/bg.jpg'
+const axios = require('axios')
 
 const Signup = () => {
 
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [userName, setUserName] = useState()
+
+    const handleSubmit = () => {
+
+        console.log("Here")
+
+    }
 
     return (
         <div style={{position:'relative',width:'100%', height:'100%',display:'flex', justifyContent:'center', alignItems:'center'}}>
@@ -19,7 +26,7 @@ const Signup = () => {
                     <input type="text" placeholder="Set your Username" onChange={(e) => { setUserName(e.target.value) }}></input>
                     <input type="text" placeholder="Enter your Email" onChange={(e) => { setEmail(e.target.value) }}></input>
                     <input type="text" placeholder="Enter your Password" onChange={(e) => { setPassword(e.target.value) }}></input>
-                    <button>Sign Up</button>
+                    <button onClick={()=>{handleSubmit()}}>Sign Up</button>
                     {/* <h3>OR</h3>
                     <button>Sign-in with Google</button> */}
 
