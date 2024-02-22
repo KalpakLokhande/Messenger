@@ -1,0 +1,51 @@
+.login {
+    width: 50%;
+    height: auto;
+    border-radius: 20px;
+    text-align: center;
+    z-index: 1;
+    background-color: rgba(1,1,1,0.9);
+  
+    h1 {
+      padding: 20px 0px;
+      color: aqua;
+      margin-bottom: 40px;
+    }
+  
+    form {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-direction: column;
+    }
+  
+    input {
+      width: 80%;
+      height: 50px;
+      border-radius: 20px;
+      border: none;
+    }
+  
+    ::placeholder {
+      text-align: center;
+    }
+  
+    button {
+      padding: 12px 18px;
+      border-radius: 20px;
+      border: none;
+      background-color: yellowgreen;
+      cursor: pointer;
+    }
+  
+    button :hover {
+      background-color: rgb(108, 155, 15);
+    }
+  
+    p {
+      color: aliceblue;
+      margin: 20px;
+    }
+  }
