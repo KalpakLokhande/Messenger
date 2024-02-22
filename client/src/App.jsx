@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import './App.css'
-import Home from './Pages/Home'
-import Login from './Pages/Login'
-import Signup from './Pages/Signup'
+import Home from '../src/Pages/Home/Home.jsx'
+import Login from '../src/Pages/Login/Login.jsx'
+import Signup from '../src/Pages/Signup/Signup.jsx'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 function App() {

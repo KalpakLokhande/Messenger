@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import Contacts from './Components/Contacts'
-import ChatArea from './Components/ChatArea'
-import defaultUser from '../Pages/assets/defaultUser.png'
-import notif from '../Pages/assets/bell.png'
+import Contacts from '../Components/Contacts'
+import ChatArea from '../Components/ChatArea'
+import defaultUser from '../assets/defaultUser.png'
+import notif from '../assets/bell.png'
 
 const Home = () => {
 

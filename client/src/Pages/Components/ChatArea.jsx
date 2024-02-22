@@ -12,9 +12,6 @@ import attach from '../assets/attached.png'
 import voice from '../assets/microphone.png'
 import Message from './Message'
 
-
-
-
 const ChatArea = () => {
     return (
         <div className='chatArea'>
