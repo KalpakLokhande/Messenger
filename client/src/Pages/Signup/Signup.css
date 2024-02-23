@@ -11,6 +11,8 @@
     height: 50px;
     border-radius: 40px;
     border: none;
+    text-align: center;
+    font-size: 14px;
   }
 
   h3{
