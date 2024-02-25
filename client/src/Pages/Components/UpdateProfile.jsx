@@ -21,7 +21,6 @@ const UpdateProfile = () => {
                 'Content-Type': 'multipart/form-data'
             })
 
-            console.log(response.data)
             sessionStorage.setItem('user', JSON.stringify(response.data))
             navigate('/home')
 

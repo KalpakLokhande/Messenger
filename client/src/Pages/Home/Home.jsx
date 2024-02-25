@@ -7,6 +7,8 @@ import './Home.css'
 
 const Home = () => {
 
+    const [user,setUser] = useState(JSON.parse(sessionStorage.getItem('user')))
+    
     return (
         <div className='home'>
             <Contacts></Contacts>

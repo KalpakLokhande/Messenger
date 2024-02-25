@@ -17,6 +17,7 @@ const Signup = () => {
 
             const response = await axios.post('http://localhost:3001/register', { email, password, userName })
             sessionStorage.setItem('user', JSON.stringify(response.data))
+            console.log(response.data)
             navigate('/updateProfile')
 
         } catch (error) {
