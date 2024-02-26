@@ -10,10 +10,10 @@ const ChatArea = (props) => {
     return (
         <div className='chatArea'>
             {props.activeChat === '' ? 
-            <h1>Select A Chat </h1> : 
+            <h1 style={{width:'100%', display:'flex', justifyContent:'center', alignItems:'center'}} >Select A Chat </h1> : 
             <>
-             <ChatHeader></ChatHeader>
-            <div className='chats'>
+             <ChatHeader activeChat={props.activeChat} ></ChatHeader>
+            <div className='chats' >
                 {/* <Message></Message> */}
             </div>
            <MessageInput></MessageInput>

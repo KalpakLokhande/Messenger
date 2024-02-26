@@ -21,9 +21,9 @@ const Contacts = (props) => {
         e.preventDefault()
 
         try {
-            const response = await axios.post('http://localhost:3001/removeFriend', { remover: user._id, removed: toRemove })
+            const response = await axios.put('http://localhost:3001/removeFriend', { remover: user._id, removed: toRemove })
             sessionStorage.setItem('user', JSON.stringify(response.data))
-            console.log(response.data)
+            setUser(response.data)
         } catch (error) {
             console.log(error)
         }
@@ -36,6 +36,7 @@ const Contacts = (props) => {
         try {
             const response = await axios.post('http://localhost:3001/addFriend', { adder: user._id, added: toAdd })
             sessionStorage.setItem('user', JSON.stringify(response.data))
+            setUser(response.data)
 
         } catch (error) {
             console.log(error)

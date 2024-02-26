@@ -20,6 +20,7 @@ const upload = multer({ storage })
 
 import { Server } from 'socket.io'
 import http from 'http'
+import { type } from 'os'
 const server = http.createServer(app)
 const io = new Server(server)
 
@@ -45,34 +46,34 @@ app.post('/register', async (req, res) => {
 
 })
 
-app.post('/login', async(req,res) => {
+app.post('/login', async (req, res) => {
 
-    try{
+    try {
 
-        const {email, password} = req.body
-        const user = await User.find({email : email})
+        const { email, password } = req.body
+        const user = await User.find({ email: email })
         console.log(user[0].password, password)
-        if(user){
+        if (user) {
 
-            if(user[0].password === password){
+            if (user[0].password === password) {
 
                 const userToSend = user[0].toObject();
                 delete userToSend.password
                 res.status(200).json(userToSend)
 
-            }else{
+            } else {
 
                 res.status(400).send('Check Your Password')
 
             }
 
-        }else{
+        } else {
 
             res.status(404).send("No User Found")
 
         }
 
-    }catch(error){
+    } catch (error) {
 
         console.log(error)
 
@@ -80,18 +81,18 @@ app.post('/login', async(req,res) => {
 
 })
 
-app.post('/removeFriend', async (req, res) => {
+app.put('/removeFriend', async (req, res) => {
 
     try {
 
         const remover = await User.findById(req.body.remover)
-        console.log(req.body.remover)
-        remover.friends = remover.friends.filter(friend => friend._id === req.body.removed)
-        remover.save()
+        remover.friends = remover.friends.filter(friend => friend._id.toString() !== req.body.removed)
+        await remover.save()
         res.status(200).json(remover)
 
     } catch (error) {
         console.log(error)
+        res.status(500).send("Something went wrong..")
     }
 
 })
@@ -128,8 +129,8 @@ app.post('/addFriend', async (req, res) => {
 
         Adder.friends.push({ _id: Added._id, displayPicture: Added.displayPicture, userName: Added.userName })
         Added.pendingRequests.push(adder)
-        Adder.save()
-        Added.save()
+        await Adder.save()
+        await Added.save()
 
         res.status(200).json(Adder)
 
