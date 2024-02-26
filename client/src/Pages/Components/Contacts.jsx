@@ -3,22 +3,33 @@ import searchIcon from '../assets/Search.png'
 import defaultUserDP from '../assets/defaultUser.png'
 import addFriend from '../assets/invite.png'
 import removeFriend from '../assets/block-user.png'
-
-
 import axios from 'axios'
 
-const Contacts = () => {
+const Contacts = (props) => {
 
     const [filterBy, setFilterBy] = useState('messages')
     const [contacts, setContacts] = useState([])
-    const [displayPictures, setDisplayPictures] = useState([])
-    const user = JSON.parse(sessionStorage.getItem('user'))
-
+    const [user, setUser] = useState(JSON.parse(sessionStorage.getItem('user')))
     const handleFilter = (criteria) => {
 
         setFilterBy(criteria)
 
     }
+
+    const handleRemoveFriend = async (e, toRemove) => {
+
+        e.preventDefault()
+
+        try {
+            const response = await axios.post('http://localhost:3001/removeFriend', { remover: user._id, removed: toRemove })
+            sessionStorage.setItem('user', JSON.stringify(response.data))
+            console.log(response.data)
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+
 
     const handleAddFriend = async (e, toAdd) => {
         e.preventDefault()
@@ -32,61 +43,16 @@ const Contacts = () => {
 
     }
 
-    const renderContacts = async (contacts) => {
-
-        try {
-
-            if (contacts.length > 1) {
-
-                const renderedContacts = await Promise.all(contacts.map(async (contact) => {
-
-                    if (contact._id === user._id) return
-
-                    console.log(contact.displayPicture)
-                    const response = await axios.get(`http://localhost:3001/getImage/${contact.displayPicture}`)
-                    const dp = response.data
-                    console.log(dp)
-
-                    return (
-                        <li key={contact._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '30px', borderBottom: '1px solid gray', margin: '0px 10px' }} >
-                            <div style={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: '15px', marginLeft: '10px' }} >
-                                <img src={contact.displayPicture ? `http://localhost:3001/${dp.path}` : defaultUserDP} style={{ objectFit: 'cover', width: '45px', height: '45px', borderRadius: '50%' }} ></img>
-                                <h4> {contact.userName} </h4>
-                            </div>
-                            {user.friends.some(friend => friend === contact._id) ?
-                                <img style={{ width: '20px', height: '20px' }} src={removeFriend} ></img> : <img onClick={(e) => { handleAddFriend(e, contact._id) }} style={{ width: '20px', height: '20px' }} src={addFriend} ></img>
-                            }
-                        </li>
-                    )
-
-
-                }))
-
-                console.log(renderedContacts)
-                setDisplayPictures(renderedContacts.filter(contact => contact != null))
-
-            } else {
-
-                setDisplayPictures([])
-
-            }
-
-        } catch (error) {
-
-            console.log(error)
-        }
-
-    }
-
     useEffect(() => {
 
-        const fetchContacts = async () => {
+        const fetchAllUsers = async () => {
 
             try {
 
                 const response = await axios.get('http://localhost:3001/getAllUsers')
+
                 setContacts(response.data)
-                renderContacts(response.data)
+                // renderContacts(response.data)
 
             } catch (error) {
                 console.log(error)
@@ -94,7 +60,7 @@ const Contacts = () => {
 
         }
 
-        fetchContacts()
+        fetchAllUsers()
 
     }, [])
 
@@ -133,29 +99,35 @@ const Contacts = () => {
                         user.friends.map(friend => {
 
                             return (
-                                <li key={friend._id}>
-                                    <img src={friend.displayPicture ? `${friend.displayPicture}` : defaultUserDP} style={{ objectFit: 'cover', width: '35px', height: '35px', borderRadius: '50%' }} ></img>
-                                    <h4> {friend.userName} </h4>
+                                <li key={friend._id} onClick={() => props.setActiveChat(friend)} style={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: '10px', marginLeft: '10px', cursor: 'pointer' }}>
+                                    <img src={friend.displayPicture ? `http://localhost:3001/${friend.displayPicture}` : defaultUserDP} style={{ objectFit: 'cover', width: '45px', height: '45px', borderRadius: '50%' }} ></img>
+                                    <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+                                        <h4> {friend.userName} </h4>
+                                        <p>Last Message</p>
+                                    </div>
                                 </li>
                             )
 
-                        }) : displayPictures
-                        // contacts.map((contact) => {
-                        //     if (contact._id === user._id) return
+                        }) : contacts.map((contact) => {
 
-                        //     return (
-                        //         <li key={contact._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '30px', borderBottom: '1px solid gray', margin: '0px 10px' }} >
-                        //             <div style={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: '15px', marginLeft: '10px' }} >
-                        //                 <img src={contact.displayPicture ? defaultUserDP : defaultUserDP} style={{ objectFit: 'cover', width: '45px', height: '45px', borderRadius: '50%' }} ></img>
-                        //                 <h4> {contact.userName} </h4>
-                        //             </div>
-                        //             {user.friends.some(friend => friend === contact._id) ?
-                        //                 <img style={{ width: '20px', height: '20px' }} src={removeFriend} ></img> : <img onClick={(e) => { handleAddFriend(e, contact._id) }} style={{ width: '20px', height: '20px' }} src={addFriend} ></img>
-                        //             }
-                        //         </li>
-                        //     )
+                            if (contact._id === user._id) return
+                            if (!contact.displayPicture) return
 
-                        // })
+                            return (
+                                <li key={contact._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '30px', borderBottom: '1px solid gray', margin: '0px 10px' }} >
+                                    <div style={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: '15px', marginLeft: '10px' }} >
+                                        <img src={contact.displayPicture ? `http://localhost:3001/${contact.displayPicture}` : defaultUserDP} style={{ objectFit: 'cover', width: '45px', height: '45px', borderRadius: '50%' }} ></img>
+                                        <h4> {contact.userName} </h4>
+                                    </div>
+                                    {user.friends.some(friend => friend._id === contact._id) ?
+                                        <img style={{ width: '20px', height: '20px' }} onClick={(e) => { handleRemoveFriend(e, contact._id) }} src={removeFriend} ></img> : <img onClick={(e) => { handleAddFriend(e, contact._id) }} style={{ width: '20px', height: '20px' }} src={addFriend} ></img>
+                                    }
+                                </li>
+                            )
+
+
+                        })
+
 
                     }
                 </ul>
