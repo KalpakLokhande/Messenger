@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose"
 
 const UserDPSchema = new mongoose.Schema({
     filename: String,
@@ -9,4 +9,4 @@ const UserDPSchema = new mongoose.Schema({
 })
 
 const UserDP = mongoose.model('UserDP', UserDPSchema)
-module.exports = UserDP
+export default UserDP

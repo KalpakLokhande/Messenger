@@ -1,10 +1,10 @@
-require('./Models/mongoose')
-const express = require('express')
+import './Models/mongoose.js'
+import express from 'express'
 const app = express()
-const cors = require('cors')
-const User = require('./Models/User')
-const multer = require('multer')
-const UserDP = require('./Models/UserDPs')
+import cors from 'cors'
+import User from './Models/User.js'
+import multer from 'multer'
+import UserDP from './Models/UserDPs.js'
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -18,6 +18,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
+import { Server } from 'socket.io'
+import http from 'http'
+const server = http.createServer(app)
+const io = new Server(server)
+
 app.use(cors())
 app.use(express.json())
 app.use('/uploads', express.static('uploads'));
@@ -30,10 +35,63 @@ app.post('/register', async (req, res) => {
 
         const { email, password, userName } = req.body
         const user = await User.create({ email: email, password: password, userName: userName })
-        res.status(200).json({ _id: user._id, userName: user.userName })
+        const userToSend = user.toObject();
+        delete userToSend.password;
+        res.status(200).json(userToSend)
 
     } catch (error) {
         console.log(err)
+    }
+
+})
+
+app.post('/login', async(req,res) => {
+
+    try{
+
+        const {email, password} = req.body
+        const user = await User.find({email : email})
+        console.log(user[0].password, password)
+        if(user){
+
+            if(user[0].password === password){
+
+                const userToSend = user[0].toObject();
+                delete userToSend.password
+                res.status(200).json(userToSend)
+
+            }else{
+
+                res.status(400).send('Check Your Password')
+
+            }
+
+        }else{
+
+            res.status(404).send("No User Found")
+
+        }
+
+    }catch(error){
+
+        console.log(error)
+
+    }
+
+})
+
+app.post('/removeFriend', async (req, res) => {
+
+    try {
+
+        const remover = await User.findById(req.body.remover)
+        console.log(req.body.remover)
+        remover.friends = remover.friends.filter(friend => friend._id === req.body.removed)
+        remover.save()
+        res.status(200).json(remover)
+
+    } catch (error) {
+        console.log(error)
     }
 
 })
@@ -44,14 +102,8 @@ app.post('/uploadProfile', upload.single('image'), async (req, res) => {
 
         const user = await User.findById(req.body.userID)
         const path = req.file.path.replace(/\//g, "\\")
-        const DP = await UserDP.create({
-            filename: req.file.filename,
-            originalname: req.file.originalname,
-            mimetype: req.file.mimetype,
-            size: req.file.size,
-            path: path
-        })
-        user.displayPicture = DP._id
+
+        user.displayPicture = path
         user.save()
         const userToSend = user.toObject();
         delete userToSend.password;
